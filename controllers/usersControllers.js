@@ -24,9 +24,7 @@ exports.getUsers = async (req, res, next) => {
 exports.signup = async (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		next(
-			new HttpError('Invalid inputs passed, please check your data', 422)
-		);
+		next(new HttpError('Invalid inputs passed, please check your data', 422));
 		// return res.status(400).json({ errors: errors.array() });
 	}
 
@@ -73,9 +71,7 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		next(
-			new HttpError('Invalid inputs passed, please check your data', 422)
-		);
+		next(new HttpError('Invalid inputs passed, please check your data', 422));
 		// return res.status(400).json({ errors: errors.array() });
 	}
 
