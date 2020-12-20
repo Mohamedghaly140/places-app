@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 
@@ -61,9 +63,7 @@ exports.getPlacesByUserId = async (req, res, next) => {
 	try {
 		places = await Place.find({ creator: userId });
 	} catch (err) {
-		return next(
-			new HttpError('Fetching places faild, please try again', 500)
-		);
+		return next(new HttpError('Fetching places faild, please try again', 500));
 	}
 
 	if (!places || places.length === 0) {
@@ -110,8 +110,7 @@ exports.createPlace = async (req, res, next) => {
 		description,
 		location: coordinates,
 		address,
-		image:
-			'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg',
+		image: req.file.path,
 		creator,
 	});
 
@@ -126,9 +125,7 @@ exports.createPlace = async (req, res, next) => {
 			);
 		}
 	} catch (err) {
-		return next(
-			new HttpError('Creating place failed, try again later', 500)
-		);
+		return next(new HttpError('Creating place failed, try again later', 500));
 	}
 
 	try {
@@ -139,10 +136,7 @@ exports.createPlace = async (req, res, next) => {
 		await user.save({ session: session });
 		await session.commitTransaction();
 	} catch (err) {
-		const error = new HttpError(
-			'Creating place faild, please try again',
-			500
-		);
+		const error = new HttpError('Creating place faild, please try again', 500);
 		return next(error);
 	}
 
@@ -152,9 +146,7 @@ exports.createPlace = async (req, res, next) => {
 exports.updatePlaceById = async (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		next(
-			new HttpError('Invalid inputs passed, please check your data', 422)
-		);
+		next(new HttpError('Invalid inputs passed, please check your data', 422));
 		// return res.status(400).json({ errors: errors.array() });
 	}
 
@@ -212,6 +204,8 @@ exports.deletePlaceById = async (req, res, next) => {
 		);
 	}
 
+	const imagePath = place.image;
+
 	try {
 		const session = await mongoose.startSession();
 		session.startTransaction();
@@ -224,6 +218,8 @@ exports.deletePlaceById = async (req, res, next) => {
 			new HttpError('Someting went wrong, could not delete place', 500)
 		);
 	}
+
+	fs.unlink(imagePath, err => console.log(err));
 
 	res.status(200).json({
 		message: 'place deleted successfuly',

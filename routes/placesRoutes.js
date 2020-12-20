@@ -12,6 +12,7 @@ const {
 	deletePlaceById,
 	createPlace,
 } = require('../controllers/placesController'); // Places Controllers
+const fileUpload = require('../middleware/file-upload');
 
 router.get('/', getPlaces);
 
@@ -21,12 +22,12 @@ router.get('/user/:uid', getPlacesByUserId);
 
 router.post(
 	'/',
+	fileUpload.single('image'),
 	[
 		body('title', 'Title is required').not().isEmpty(),
-		body(
-			'description',
-			'Please enter description min length is 5'
-		).isLength({ min: 5 }),
+		body('description', 'Please enter description min length is 5').isLength({
+			min: 5,
+		}),
 		body('address', 'Address is required').not().isEmpty(),
 	],
 	createPlace
@@ -36,10 +37,9 @@ router.put(
 	'/:pid',
 	[
 		body('title', 'Title is required').not().isEmpty(),
-		body(
-			'description',
-			'Please enter description min length is 5'
-		).isLength({ min: 5 }),
+		body('description', 'Please enter description min length is 5').isLength({
+			min: 5,
+		}),
 	],
 	updatePlaceById
 );
