@@ -95,7 +95,23 @@ exports.login = async (req, res, next) => {
 		);
 	}
 
-	if (!exsitingUser || exsitingUser.password !== password) {
+	if (!exsitingUser) {
+		return next(new HttpError('Invalid credentails, could not login', 422));
+	}
+
+	let isValidPassword;
+	try {
+		isValidPassword = await bcrypt.compare(password, exsitingUser.password);
+	} catch (err) {
+		return next(
+			new HttpError(
+				'Could not log you in, please check your credentails and try again',
+				422
+			)
+		);
+	}
+
+	if (!isValidPassword) {
 		return next(new HttpError('Invalid credentails, could not login', 422));
 	}
 
