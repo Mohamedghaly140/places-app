@@ -28,7 +28,7 @@ exports.signup = async (req, res, next) => {
 		// return res.status(400).json({ errors: errors.array() });
 	}
 
-	const { name, email, password, image } = req.body;
+	const { name, email, password } = req.body;
 
 	let exsitingUser;
 	try {
