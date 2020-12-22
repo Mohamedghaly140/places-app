@@ -110,7 +110,7 @@ exports.createPlace = async (req, res, next) => {
 		description,
 		location: coordinates,
 		address,
-		image: req.file.path,
+		image: 'req.file.path',
 		creator,
 	});
 
