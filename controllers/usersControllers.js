@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/HttpError');
 const User = require('../models/User');
@@ -71,9 +72,24 @@ exports.signup = async (req, res, next) => {
 		);
 	}
 
+	let token;
+	try {
+		token = jwt.sign(
+			{ userId: createdUser.id, email: createdUser.email },
+			process.env.JWT_SECRET_KEY,
+			{ expiresIn: '1h' }
+		);
+	} catch (err) {
+		return next(
+			new HttpError('Signing up failed, please try again later', 500)
+		);
+	}
+
 	res.status(201).json({
 		message: 'Signed up successfuly',
-		user: createdUser.toObject({ getters: true }),
+		userId: createdUser.id,
+		email: createdUser.email,
+		token: token,
 	});
 };
 
@@ -115,8 +131,23 @@ exports.login = async (req, res, next) => {
 		return next(new HttpError('Invalid credentails, could not login', 422));
 	}
 
+	let token;
+	try {
+		token = jwt.sign(
+			{ userId: exsitingUser.id, email: exsitingUser.email },
+			process.env.JWT_SECRET_KEY,
+			{ expiresIn: '1h' }
+		);
+	} catch (err) {
+		return next(
+			new HttpError('Logging in failed, please try again later', 500)
+		);
+	}
+
 	res.json({
 		message: 'Loggedin successfuly',
-		user: exsitingUser.toObject({ getters: true }),
+		userId: exsitingUser.id,
+		email: exsitingUser.email,
+		token: token,
 	});
 };
