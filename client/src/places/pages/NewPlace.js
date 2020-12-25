@@ -52,7 +52,9 @@ const NewPlace = () => {
 				Authorization: `Bearer ${auth.token}`,
 			});
 			history.push('/');
-		} catch (err) {}
+		} catch (err) {
+			console.log(err)
+		}
 	};
 
 	return (
