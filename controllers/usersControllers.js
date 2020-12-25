@@ -122,7 +122,7 @@ exports.login = async (req, res, next) => {
 		return next(
 			new HttpError(
 				'Could not log you in, please check your credentails and try again',
-				422
+				403
 			)
 		);
 	}
